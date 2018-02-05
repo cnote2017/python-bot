@@ -1,3 +1,3 @@
-# python-bot
+# python-trading-bot
 
-test
+Poloniex Apis
