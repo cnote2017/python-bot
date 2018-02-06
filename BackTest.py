@@ -26,15 +26,16 @@ if __name__ == "__main__":
 	parser.add_argument(
 		'-e', '--exchange',
 		help='Exchange name. eg. bitfinex, binance')	
-	parser.add_argument(
-		'-t', '--timeframe',
-		help='Time interval (eg. 15m, 3h, 1d) of candles. Default: 1h',
-		default='1h')
+	
 	parser.add_argument(
 		'-lt', '--limit',
 		help='Number of candle bars requested. Default: 60',
 		type=int,
 		default=60)
+	parser.add_argument(
+		'-t', '--timeframe',
+		help='Time interval (eg. 15m, 3h, 1d) of candles. Default: 1h',
+		default='1h')
 	parser.add_argument(
 		'-st', '--start_time',
 		help='Start time filter (Unix timestamp). Default: 0',

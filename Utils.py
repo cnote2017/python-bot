@@ -11,7 +11,8 @@
                 ticker = {k:v for k,v in json_r.items() if k in ['last_price', 'timestamp']}
         elif exchange=='bittrex':
             pass
-
+            api_path = API_BITFINEX_CANDLES + 'trade:{}:t{}/hist?limit={}'.format(
+                interval, symbol.upper(), limit)
         elif exchange=='binance':
             r = requests.get(API_BINANCE_ENDPOINT + API_BINANCE_TICKER)
 
@@ -36,8 +37,7 @@
             if timeframe in bitfinex_tf:
                 interval = bitfinex_tf[timeframe]['interval']
 
-            api_path = API_BITFINEX_CANDLES + 'trade:{}:t{}/hist?limit={}'.format(
-                interval, symbol.upper(), limit)
+            
             if start_time:
                 api_path = API_BITFINEX_CANDLES + 'trade:{}:t{}/hist?limit={}&start={}&end={}'.format(
                     interval, symbol.upper(), limit, start_time, end_time)
@@ -60,19 +60,6 @@
             # Set default params
             interval = timeframe
             factor = 1
-            if timeframe in binance_tf:
-                interval = binance_tf[timeframe]['interval']
-                factor = binance_tf[timeframe]['factor']
-                limit = factor * limit
-
-            api_path = API_BINANCE_CANDLES + '?symbol={}&interval={}&limit={}'.format(
-                symbol.upper(), interval, limit)
-            if start_time:
-                api_path = API_BINANCE_CANDLES + '?symbol={}&interval={}&startTime={}&endTime={}'.format(
-                    symbol.upper(), interval, start_time, end_time)
-            r = requests.get(API_BINANCE_ENDPOINT + api_path)
-
-            json_r = r.json()
             if 'msg' not in json_r:
                 json_r = json_r[-limit:]
                 if factor>1:
@@ -86,6 +73,20 @@
                 df_p=df_p.set_index('ts')
 
                 tickers_df = tickers_df.append(df_p)
+            if timeframe in binance_tf:
+                interval = binance_tf[timeframe]['interval']
+                factor = binance_tf[timeframe]['factor']
+                limit = factor * limit
+
+            api_path = API_BINANCE_CANDLES + '?symbol={}&interval={}&limit={}'.format(
+                symbol.upper(), interval, limit)
+            if start_time:
+                api_path = API_BINANCE_CANDLES + '?symbol={}&interval={}&startTime={}&endTime={}'.format(
+                    symbol.upper(), interval, start_time, end_time)
+            r = requests.get(API_BINANCE_ENDPOINT + api_path)
+
+            json_r = r.json()
+            
 
         return tickers_df
 
