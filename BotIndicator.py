@@ -1,4 +1,5 @@
 # Indicator methods for Trading Bot 
+import numpy as np
 
 class BotIndicator():
 
@@ -70,15 +71,22 @@ class BotIndicator():
         return rsi
 
     @staticmethod
-    def is_trend_or_flat(L1,L2, epsilon):
+    def is_trend_or_flat(L1,L2, epsilon1, epsilon2):
         # find, if sequence L is increasing 1 or decreasing -1 or flat 2
         r = 0
-        m1 = all(x*(1 + epsilon) < y for x, y in zip(L1, L1[1:]))
-        m2 = all(x*(1 - epsilon) > y for x, y in zip(L1, L1[1:]))
-        m3 = all(abs((x - y)/x) < epsilon for x, y in zip(L2, L2[1:])) * 2
-        if m1:
+        f1 = all(x <= 0 for x in L1)
+        f2 = all(x >= 0 for x in L1)
+        k = L2.mean()
+        m = len(L1[1:])
+        m1 = np.sum((x + epsilon2) < y for x, y in zip(L1, L1[1:]))
+        m2 = np.sum((x - epsilon2) > y for x, y in zip(L1, L1[1:]))
+        m3 = all(abs(x - k) < epsilon1 for x in L2)
+        #m4 = np.sum(x <= y + 2*epsilon2 for x, y in zip(L1, L1[1:]))
+        #m5 = np.sum(x >= y - 2*epsilon2 for x, y in zip(L1, L1[1:]))
+
+        if (m1 == m): # and (m1+1 >= m):
             r = 1
-        if m2:
+        if (m2 == m): #and (m2+1 >= m):
             r = -1
         if m3:
             r = 2
